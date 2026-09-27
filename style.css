@@ -618,3 +618,131 @@ footer {
         height: 240px;
     }
 }
+/* =========================================
+   PERFORMANCE + NAVIGATION IMPROVEMENTS
+   ========================================= */
+
+/* Faster, cleaner scrolling */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 110px;
+}
+
+/* Reduce expensive blur rendering */
+.liquid-layer {
+    filter: blur(60px);
+    will-change: transform;
+}
+
+.cursor-light {
+    filter: blur(20px);
+    will-change: transform;
+}
+
+/* Better glass performance */
+.navbar {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.career-card,
+.feature-info {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* =========================================
+   NAVIGATION BUTTON STYLE
+   ========================================= */
+
+.nav-links {
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 38px;
+    padding: 0 14px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.nav-links a:active {
+    transform: scale(0.97);
+}
+
+/* =========================================
+   REDUCE IMAGE RENDERING COST
+   ========================================= */
+
+.photo-placeholder img {
+    transition: transform 0.3s ease;
+    backface-visibility: hidden;
+}
+
+/* =========================================
+   ACCESSIBILITY / LOW MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================
+   MOBILE NAVIGATION
+   ========================================= */
+
+@media (max-width: 800px) {
+
+    .nav-links {
+        gap: 4px;
+    }
+
+    .nav-links a {
+        min-height: 34px;
+        padding: 0 9px;
+        border-radius: 10px;
+        font-size: 9px;
+    }
+
+    .navbar {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .career-card,
+    .feature-info {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+}
