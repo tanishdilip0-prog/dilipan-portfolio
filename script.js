@@ -1,5 +1,6 @@
 // ========================================
 // DILIPAN — LIQUID GLASS INTERFACE
+// Optimized version
 // ========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,25 +10,63 @@ document.addEventListener("DOMContentLoaded", () => {
     const cards = document.querySelectorAll(".career-card");
     const buttons = document.querySelectorAll(".btn");
 
+    let mouseX = 0;
+    let mouseY = 0;
+    let animationFrame = null;
+
+    let activeCard = null;
+
     // ========================================
-    // CURSOR → LIQUID BACKGROUND
+    // CURSOR + LIQUID BACKGROUND
     // ========================================
 
     document.addEventListener("mousemove", (event) => {
 
-        const mouseX = event.clientX;
-        const mouseY = event.clientY;
+        mouseX = event.clientX;
+        mouseY = event.clientY;
 
-        // Move the soft glass light
-        if (cursorLight) {
-            cursorLight.style.left = `${mouseX}px`;
-            cursorLight.style.top = `${mouseY}px`;
+        // Prevent dozens of DOM updates per frame
+        if (!animationFrame) {
+            animationFrame = requestAnimationFrame(updateEffects);
         }
 
-        // Move each liquid layer at a different speed
+        // Find the card currently under the cursor
+        const element = document.elementFromPoint(mouseX, mouseY);
+        const card = element?.closest(".career-card");
+
+        if (card !== activeCard) {
+
+            if (activeCard) {
+                activeCard.style.transform =
+                    "perspective(900px) rotateX(0deg) rotateY(0deg)";
+            }
+
+            activeCard = card || null;
+        }
+    });
+
+
+    function updateEffects() {
+
+        animationFrame = null;
+
+        // ========================================
+        // CURSOR LIGHT
+        // ========================================
+
+        if (cursorLight) {
+            cursorLight.style.transform =
+                `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+        }
+
+
+        // ========================================
+        // LIQUID BACKGROUND
+        // ========================================
+
         layers.forEach((layer, index) => {
 
-            const speed = (index + 1) * 0.018;
+            const speed = (index + 1) * 0.012;
 
             const moveX =
                 (mouseX - window.innerWidth / 2) * speed;
@@ -36,41 +75,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 (mouseY - window.innerHeight / 2) * speed;
 
             layer.style.transform =
-                `translate(${moveX}px, ${moveY}px)`;
+                `translate3d(${moveX}px, ${moveY}px, 0)`;
         });
 
+
         // ========================================
-        // GLASS CARD TILT
+        // ACTIVE CARD TILT
         // ========================================
 
-        cards.forEach((card) => {
+        if (activeCard) {
 
-            const rect = card.getBoundingClientRect();
+            const rect = activeCard.getBoundingClientRect();
 
-            const cardX =
-                mouseX - rect.left;
-
-            const cardY =
-                mouseY - rect.top;
+            const cardX = mouseX - rect.left;
+            const cardY = mouseY - rect.top;
 
             const rotateX =
-                ((cardY - rect.height / 2) /
-                rect.height) * -5;
+                ((cardY - rect.height / 2) / rect.height) * -4;
 
             const rotateY =
-                ((cardX - rect.width / 2) /
-                rect.width) * 5;
+                ((cardX - rect.width / 2) / rect.width) * 4;
 
-            card.style.transform =
+            activeCard.style.transform =
                 `perspective(900px)
                  rotateX(${rotateX}deg)
                  rotateY(${rotateY}deg)`;
-        });
-    });
+        }
+    }
 
 
     // ========================================
-    // RESET CARD WHEN MOUSE LEAVES
+    // RESET CARD
     // ========================================
 
     cards.forEach((card) => {
@@ -79,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             card.style.transform =
                 "perspective(900px) rotateX(0deg) rotateY(0deg)";
+
+            if (activeCard === card) {
+                activeCard = null;
+            }
         });
     });
 
@@ -92,8 +131,9 @@ document.addEventListener("DOMContentLoaded", () => {
         button.addEventListener("mouseenter", () => {
 
             button.style.transform =
-                "translateY(-4px) scale(1.04)";
+                "translateY(-3px) scale(1.02)";
         });
+
 
         button.addEventListener("mouseleave", () => {
 
